@@ -1,6 +1,6 @@
 JULIA_ARCHIVE=julia-1.7.3-linux-x86_64.tar.gz
-JULIA_DIR=$(shell pwd)/julia-1.7.3/
-JULIA_DEPOT_DIR=$(shell pwd)/.julia/
+JULIA_DIR=$(shell pwd)/julia-1.7.3
+JULIA_DEPOT_DIR=$(shell pwd)/.julia
 JULIA_DEPOT_CONFIG=$(JULIA_DIR)/etc/julia/startup.jl
 JULIA_EXEC_FLAG=$(JULIA_DIR)/bin/julia_success
 JULIA_EXEC=$(JULIA_DIR)/bin/julia
