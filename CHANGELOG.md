@@ -1,3 +1,45 @@
+## [0.6.2] — 2023-08-15
+
+### Fixed
+
+- Fixed wrong parameter interpretation in `neighborhood_count_matrix()`
+- Fixed incompatibility with `julia-1.9` ([#78](https://github.com/kharchenkolab/Baysor/issues/78))
+- Fixed `boundary_polygons_from_grid` error ([#82](https://github.com/kharchenkolab/Baysor/issues/82))
+- Fixed a problem with huge integers in cell ids ([#83](https://github.com/kharchenkolab/Baysor/issues/83))
+
+## [0.6.1] — 2023-05-11
+
+### Fixed
+
+- Fixed a bug with prior segmentation loading
+- Fixed a bug with compartment genes
+
+## [0.6.0] — 2023-04-20
+
+### Added
+
+- New output cell QC parameters `avg_assignment_confidence`, `max_cluster_frac` and `lifespan`
+- Segmented cells are now saved to loom instead of TSV. To return an old behavior, use `count-matrix-format="tsv"`
+- Minimal multi-threading (see README)
+
+### Removed
+
+- `iters` and `n-cells-init` parameters were removed from the CLI shortcuts. To change them, use the config or `--config.segmentation.iters` and `--config.segmentation.n_cells_init` parameters *(see 'Advanced configuration section in the readme')*.
+
+### Changed
+
+- Breaking changes in config file structure and CLI
+- Greatly improved responsiveness of the CLI and simplified installation process
+- Major refactoring of the code
+- Various performance improvements
+- Faster and more precise algorithm for estimating boundary polygons. Now each cell has exactly one polygon in the output GeoJSON.
+    - *For method details see [Awrangjeb, 2015](https://doi.org/10.1109/IVCNZ.2015.7761536), it's pretty similar.*
+    - *Closes [#15](https://github.com/kharchenkolab/Baysor/issues/15) and [#41](https://github.com/kharchenkolab/Baysor/issues/41), potentially also [#32](https://github.com/kharchenkolab/Baysor/issues/32) and [#37](https://github.com/kharchenkolab/Baysor/issues/37).*
+- Using sparse PCA for NCV estimation on large datasets
+- `baysor segfree` output is now fully compatible with loom v3 format
+- Cells and NCVs now have IDs in the format `{type}{run_id}-{cell_id}`, where `type` is `C` for cells and `V` for NCVs, and `run_id` is a unique ID of Baysor run
+- `--save-polygons` now works regardless of `-p`
+
 ## [0.5.2] — 2022-06-29
 
 - Fixed some package versions, dependencies should cause fewer bugs now

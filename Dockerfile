@@ -6,6 +6,7 @@ RUN apt-get install -y git
 RUN apt-get install -y wget
 
 RUN git clone https://github.com/LouisK92/Baysor.git
+RUN git checkout -b v0_6_2
 RUN cd Baysor/bin && make
 RUN cd Baysor && chmod -R 775 .
 

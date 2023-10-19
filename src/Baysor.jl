@@ -1,59 +1,44 @@
 module Baysor
 
-using Distributions
-using LinearAlgebra
-using ProgressMeter
-using Statistics
+include("LazySubmodules.jl")
+using .LazySubmodules
 
-import Distributions.pdf
-import Distributions.logpdf
-import Statistics.rand
-import Pkg
+# export
+#     BmmData, bmm!,
+#     build_molecule_graph, load_df, initialize_bmm_data,
+#     boundary_polygons,
+#     neighborhood_count_matrix, gene_composition_transformation, gene_composition_colors,
+#     append_confidence!,
+#     plot_molecules, plot_molecules!, plot_expression_vectors,
+#     cluster_molecules_on_mrf
 
-export
-    BmmData, bmm!,
-    build_molecule_graph, load_df, initialize_bmm_data,
-    boundary_polygons,
-    neighborhood_count_matrix, gene_composition_transformation, gene_composition_colors,
-    append_confidence!,
-    plot_molecules, plot_molecules!, plot_expression_vectors,
-    cluster_molecules_on_mrf
+export load_module
 
-pkg_version = Pkg.TOML.parsefile(joinpath(dirname(dirname(pathof(@__MODULE__))), "Project.toml"))["version"] # Pre-estimated for binary builds
+LazySubmodules.__init__() # Somehow without it __init__ is only called after all @lazy_submodule macroses
 
-include("utils/utils.jl")
-include("utils/logging.jl")
-include("utils/convex_hull.jl")
-include("utils/spatial.jl")
-include("utils/vega_wrappers.jl")
+if (get(ENV, "LazyModules_lazyload", "") == "false")
+    # During compilation, it is the only way to disable lazy loading
+    # I don't know why `init` doesn't work
+    @info "Disabling lazy loading of submodules"
+    LazySubmodules._LAZYMODE[] = false
+end
 
-include("distributions/MvNormal.jl")
-include("distributions/CategoricalSmoothed.jl")
+# Utils: Minimal functions with zero compilation time shared across submodules
+include("utils/Utils.jl")
 
-include("models/InitialParams.jl")
-include("models/Component.jl")
-include("models/BmmData.jl")
+# DataLoading: work with different input and output formats. Isolated as it requires additional file-type specific libraries
+@lazy_submodule DAT = "data_loading/DataLoading.jl"
 
-include("data_processing/prior_segmentation.jl")
-include("data_processing/triangulation.jl")
-include("data_processing/umap_wrappers.jl")
-include("data_processing/neighborhood_composition.jl")
-include("data_processing/noise_estimation.jl")
-include("data_processing/initialization.jl")
-include("data_processing/plots.jl")
-include("data_processing/boundary_estimation.jl")
-include("data_processing/diagnostic_plots.jl")
+# Reporting: all plotting code isolated, as plotting libraries are the slowest in Julia
+@lazy_submodule REP = "reporting/Reporting.jl"
 
-include("bmm_algorithm/molecule_clustering.jl")
-include("bmm_algorithm/compartment_segmentation.jl")
-include("bmm_algorithm/tracing.jl")
-include("bmm_algorithm/distribution_samplers.jl")
-include("bmm_algorithm/history_analysis.jl")
-include("bmm_algorithm/bmm_algorithm.jl")
+# Processing: all the actual logic
+@lazy_submodule BPR = "processing/Processing.jl"
 
-include("cli/common.jl")
-include("cli/main.jl")
-include("cli/preview.jl")
-include("cli/segfree.jl")
+# CLI: minimal CLI code required for fast responsive CLI
+@lazy_submodule CLI = "cli/CLI.jl"
+
+command_main(args...; kwargs...) = CLI.command_main(args...; kwargs...)
+julia_main(args...; kwargs...) = CLI.julia_main(args...; kwargs...)
 
 end # module
