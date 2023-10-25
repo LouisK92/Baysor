@@ -1,6 +1,25 @@
 [![Build Status](https://travis-ci.com/kharchenkolab/Baysor.svg?branch=master)](https://travis-ci.com/github/kharchenkolab/Baysor)
 [![codecov](https://codecov.io/gh/kharchenkolab/Baysor/branch/master/graph/badge.svg?token=12AE1N3DY4)](undefined)
 
+# Fork info
+Aim: create a baysor docker container that can be converted to a singularity container for use on the cluster.
+
+```bash
+#build
+docker build -t louisk92/txsim_baysor:v0.6.2bin .
+
+#test
+docker run -it -v .../tst_data:/tst_data --entrypoint /bin/bash louisk92/txsim_baysor:v0.6.2bin
+baysor run -s 20 -g Gene -m 1 -o /tst_data/out /tst_data/spots.csv --prior-segmentation-confidence 0.2 /tst_data/nuclei.tif
+
+#push
+docker push louisk92/txsim_baysor:v0.6.2bin
+
+#build and test singularity
+singularity pull baysor_v0.6.2bin.sif docker://louisk92/txsim_baysor:v0.6.2bin
+singularity exec baysor_v0.6.2bin.sif baysor
+```
+
 # Baysor
 
 **Bay**esian **s**egmentation **o**f imaging-based spatial t**r**anscriptomics data
